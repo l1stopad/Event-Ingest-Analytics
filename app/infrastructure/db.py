@@ -21,7 +21,7 @@ async def get_conn() -> psycopg.AsyncConnection:
         password=settings.db_password,
         dbname=settings.db_name,
     )
-    attempts, delay = 30, 1.0  # до ~30 секунд очікування
+    attempts, delay = 30, 1.0  # ~30s total
 
     for i in range(1, attempts + 1):
         try:
@@ -42,8 +42,24 @@ async def get_conn() -> psycopg.AsyncConnection:
             delay = min(delay * 1.5, 5.0)
 
 async def ensure_migrations() -> None:
-    # Поки no-op. На Етапі 3 створимо таблиці.
-    return None
+    """Create tables & indexes idempotently."""
+    conn = await get_conn()
+    async with conn.cursor() as cur:
+        # events table
+        await cur.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            event_id    UUID PRIMARY KEY,
+            occurred_at TIMESTAMPTZ NOT NULL,
+            user_id     TEXT NOT NULL,
+            event_type  TEXT NOT NULL,
+            properties  JSONB NOT NULL DEFAULT '{}'::jsonb
+        );
+        """)
+        # helpful indexes
+        await cur.execute("CREATE INDEX IF NOT EXISTS idx_events_occurred_at ON events (occurred_at);")
+        await cur.execute("CREATE INDEX IF NOT EXISTS idx_events_type_time ON events (event_type, occurred_at);")
+        await cur.execute("CREATE INDEX IF NOT EXISTS idx_events_props_gin ON events USING GIN (properties jsonb_path_ops);")
+        log.info("migrations_applied")
 
 async def shutdown() -> None:
     global _conn
