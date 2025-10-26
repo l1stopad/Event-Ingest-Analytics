@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.db
+.parquet/
+.analytics/
+.duckdb
+.pytest_cache/
+.coverage

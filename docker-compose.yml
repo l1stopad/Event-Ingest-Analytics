@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    container_name: events_api
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: events_pg
+    environment:
+      POSTGRES_DB: events
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d events"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pgweb:
+    image: sosedoff/pgweb:0.14.0
+    container_name: events_pgweb
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://app:app@postgres:5432/events?sslmode=disable
+    ports:
+      - "8081:8081"
+    command: ["--bind=0.0.0.0", "--listen=8081"]
+
+volumes:
+  pgdata:
