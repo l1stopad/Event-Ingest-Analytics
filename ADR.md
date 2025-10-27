@@ -1,4 +1,4 @@
-ADR-001 — Архітектура Events Analytics сервісу
+Архітектура Events Analytics сервісу
 1. Context
 
 Це тестове завдання, але цілеспрямовано реалізоване не як тимчасовий скрипт, а як production-ready ingestion analytics-сервіс, який може з часом вирости в платформу на зразок Amplitude / Mixpanel / Segment ingestion layer.
