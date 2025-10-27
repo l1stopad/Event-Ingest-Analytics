@@ -17,6 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 COPY app app
+COPY tests tests
+COPY pytest.ini pytest.ini
 
 
 RUN useradd -ms /bin/bash appuser

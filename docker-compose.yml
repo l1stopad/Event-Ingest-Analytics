@@ -12,6 +12,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./data:/data:ro
+      - ./tests:/app/tests:ro
+      - ./pytest.ini:/app/pytest.ini:ro
 
   postgres:
     image: postgres:16-alpine
