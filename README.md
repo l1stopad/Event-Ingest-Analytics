@@ -68,8 +68,7 @@ Measure-Command {
 → ~163.5 сек
 
 DAU-запит
-powershell
-Копировать код
+
 Measure-Command {
   Invoke-WebRequest "http://localhost:8000/stats/dau?from=2025-08-01&to=2025-08-30" > $null
 } | Select-Object TotalMilliseconds
