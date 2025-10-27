@@ -8,7 +8,6 @@
 
 ```bash
 git clone https://github.com/l1stopad/Event-Ingest-Analytics
-cd events-analytics
 docker compose up -d
 Після запуску доступно:
 
@@ -57,9 +56,11 @@ docker compose exec api pytest -q -o cache_dir=/tmp/.pytest_cache
 
 📊 Benchmark (100k events)
 Дані → data/bench_100k.csv
+Дані → data/events_sample.csv
 
-Імпорт
-powershell
+docker compose exec api python -m app.cli /data/events_sample.csv -k demo_seed -b 2000
+docker compose exec api python -m app.cli /data/bench_100k.csv -k bench100k -b 2000
+
 
 Measure-Command {
   docker compose exec api python -m app.cli /data/bench_100k.csv -k bench100k -b 2000
